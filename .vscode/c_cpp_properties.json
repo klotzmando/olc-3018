@@ -1,0 +1,91 @@
+{
+    "configurations": [
+        {
+            "name": "!!! WARNING !!! AUTO-GENERATED FILE, PLEASE DO NOT MODIFY IT AND USE https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags"
+        },
+        {
+            "name": "Win32",
+            "includePath": [
+                "c:/Users/dklot/OneDrive/Documents/Klotzmando CNC Offline Controller/CNCOC/include",
+                "c:/Users/dklot/OneDrive/Documents/Klotzmando CNC Offline Controller/CNCOC/src",
+                "C:/Users/dklot/.platformio/packages/framework-arduinoststm32/libraries/SPI/src",
+                "C:/Users/dklot/.platformio/packages/framework-arduinoststm32/libraries/Wire/src",
+                "C:/Users/dklot/.platformio/packages/framework-arduinoststm32/cores/arduino/avr",
+                "C:/Users/dklot/.platformio/packages/framework-arduinoststm32/cores/arduino/stm32",
+                "C:/Users/dklot/.platformio/packages/framework-arduinoststm32/cores/arduino/stm32/LL",
+                "C:/Users/dklot/.platformio/packages/framework-arduinoststm32/cores/arduino/stm32/usb",
+                "C:/Users/dklot/.platformio/packages/framework-arduinoststm32/cores/arduino/stm32/usb/hid",
+                "C:/Users/dklot/.platformio/packages/framework-arduinoststm32/cores/arduino/stm32/usb/cdc",
+                "C:/Users/dklot/.platformio/packages/framework-arduinoststm32/system/Drivers/STM32F1xx_HAL_Driver/Inc",
+                "C:/Users/dklot/.platformio/packages/framework-arduinoststm32/system/Drivers/STM32F1xx_HAL_Driver/Src",
+                "C:/Users/dklot/.platformio/packages/framework-arduinoststm32/system/STM32F1xx",
+                "C:/Users/dklot/.platformio/packages/framework-arduinoststm32/system/Middlewares/ST/STM32_USB_Device_Library/Core/Inc",
+                "C:/Users/dklot/.platformio/packages/framework-arduinoststm32/system/Middlewares/ST/STM32_USB_Device_Library/Core/Src",
+                "C:/Users/dklot/.platformio/packages/framework-arduinoststm32/CMSIS/CMSIS/Core/Include",
+                "C:/Users/dklot/.platformio/packages/framework-arduinoststm32/system/Drivers/CMSIS/Device/ST/STM32F1xx/Include",
+                "C:/Users/dklot/.platformio/packages/framework-arduinoststm32/system/Drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/gcc",
+                "C:/Users/dklot/.platformio/packages/framework-arduinoststm32/cores/arduino",
+                "C:/Users/dklot/.platformio/packages/framework-arduinoststm32/variants/PILL_F103XX",
+                "C:/Users/dklot/.platformio/lib/Servo_ID883/src",
+                "C:/Users/dklot/.platformio/packages/framework-arduinoststm32/libraries/EEPROM/src",
+                "C:/Users/dklot/.platformio/packages/framework-arduinoststm32/libraries/IWatchdog/src",
+                "C:/Users/dklot/.platformio/packages/framework-arduinoststm32/libraries/Keyboard/src",
+                "C:/Users/dklot/.platformio/packages/framework-arduinoststm32/libraries/Mouse/src",
+                "C:/Users/dklot/.platformio/packages/framework-arduinoststm32/libraries/Servo/src",
+                "C:/Users/dklot/.platformio/packages/tool-unity",
+                ""
+            ],
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "path": [
+                    "c:/Users/dklot/OneDrive/Documents/Klotzmando CNC Offline Controller/CNCOC/include",
+                    "c:/Users/dklot/OneDrive/Documents/Klotzmando CNC Offline Controller/CNCOC/src",
+                    "C:/Users/dklot/.platformio/packages/framework-arduinoststm32/libraries/SPI/src",
+                    "C:/Users/dklot/.platformio/packages/framework-arduinoststm32/libraries/Wire/src",
+                    "C:/Users/dklot/.platformio/packages/framework-arduinoststm32/cores/arduino/avr",
+                    "C:/Users/dklot/.platformio/packages/framework-arduinoststm32/cores/arduino/stm32",
+                    "C:/Users/dklot/.platformio/packages/framework-arduinoststm32/cores/arduino/stm32/LL",
+                    "C:/Users/dklot/.platformio/packages/framework-arduinoststm32/cores/arduino/stm32/usb",
+                    "C:/Users/dklot/.platformio/packages/framework-arduinoststm32/cores/arduino/stm32/usb/hid",
+                    "C:/Users/dklot/.platformio/packages/framework-arduinoststm32/cores/arduino/stm32/usb/cdc",
+                    "C:/Users/dklot/.platformio/packages/framework-arduinoststm32/system/Drivers/STM32F1xx_HAL_Driver/Inc",
+                    "C:/Users/dklot/.platformio/packages/framework-arduinoststm32/system/Drivers/STM32F1xx_HAL_Driver/Src",
+                    "C:/Users/dklot/.platformio/packages/framework-arduinoststm32/system/STM32F1xx",
+                    "C:/Users/dklot/.platformio/packages/framework-arduinoststm32/system/Middlewares/ST/STM32_USB_Device_Library/Core/Inc",
+                    "C:/Users/dklot/.platformio/packages/framework-arduinoststm32/system/Middlewares/ST/STM32_USB_Device_Library/Core/Src",
+                    "C:/Users/dklot/.platformio/packages/framework-arduinoststm32/CMSIS/CMSIS/Core/Include",
+                    "C:/Users/dklot/.platformio/packages/framework-arduinoststm32/system/Drivers/CMSIS/Device/ST/STM32F1xx/Include",
+                    "C:/Users/dklot/.platformio/packages/framework-arduinoststm32/system/Drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/gcc",
+                    "C:/Users/dklot/.platformio/packages/framework-arduinoststm32/cores/arduino",
+                    "C:/Users/dklot/.platformio/packages/framework-arduinoststm32/variants/PILL_F103XX",
+                    "C:/Users/dklot/.platformio/lib/Servo_ID883/src",
+                    "C:/Users/dklot/.platformio/packages/framework-arduinoststm32/libraries/EEPROM/src",
+                    "C:/Users/dklot/.platformio/packages/framework-arduinoststm32/libraries/IWatchdog/src",
+                    "C:/Users/dklot/.platformio/packages/framework-arduinoststm32/libraries/Keyboard/src",
+                    "C:/Users/dklot/.platformio/packages/framework-arduinoststm32/libraries/Mouse/src",
+                    "C:/Users/dklot/.platformio/packages/framework-arduinoststm32/libraries/Servo/src",
+                    "C:/Users/dklot/.platformio/packages/tool-unity",
+                    ""
+                ]
+            },
+            "defines": [
+                "PLATFORMIO=40003",
+                "STM32F1",
+                "STM32F103x6",
+                "ARDUINO_BLUEPILL_F103C6",
+                "STM32F1xx",
+                "ARDUINO=10808",
+                "ARDUINO_ARCH_STM32",
+                "ARDUINO_BLUEPILL_F103C6",
+                "BOARD_NAME=\"BLUEPILL_F103C6\"",
+                "HAL_UART_MODULE_ENABLED",
+                ""
+            ],
+            "intelliSenseMode": "clang-x64",
+            "cStandard": "c11",
+            "cppStandard": "c++14",
+            "compilerPath": "\"C:/Users/dklot/.platformio/packages/toolchain-gccarmnoneeabi@1.70201.0/bin/arm-none-eabi-gcc.exe\" -mcpu=cortex-m3 -mthumb"
+        }
+    ],
+    "version": 4
+}
