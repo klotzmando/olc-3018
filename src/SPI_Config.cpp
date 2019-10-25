@@ -1,14 +1,5 @@
 #include "SPI_Config.h"
 
-SPI_Config::SPI_Config(uint8_t pinCS, int pinDin, int pinCLK, int pinDC,uint8_t pinRST) 
-: cs(pinCS)
-, din(pinDin)
-, clk(pinCLK)
-, dc(pinDC)
-, rst(pinRST)
-{
-}
-
 void SPI_Config::CS(uint8_t setting) {
 	digitalWrite(cs, setting);
 }

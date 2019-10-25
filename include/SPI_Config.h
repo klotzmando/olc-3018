@@ -5,7 +5,8 @@
 /**
  * This is a container for the  I/O pins used to interface to a device connected via SPI.
  */
-class SPI_Config {
+class SPI_Config
+{
 
 private:
 	/**
@@ -29,22 +30,31 @@ private:
 	 */
 	uint8_t rst;
 
+	enum InterfaceSpi
+	{
+		i_4pinSpi,
+		i_3pinSpi
+	} SpiConnecion = i_4pinSpi;
+
 public:
-	/**
-	 * Constructor
-	 */
-	SPI_Config(/* The pin used to supply chip select (CS) */uint8_t pinCS = PA4, /* Data pin for data being sent to the device.
-The normal spi name is MOSI. */int pinDin = PA7, /* Pin supplying the clock to transfer data. */int pinCLK = PA5, /* The pin to use to indicate the data is for command or data. */int pinDC = PB8, /* The pin for sending a reset signal to the connected device. */uint8_t pinRST = PB9);
+	SPI_Config( uint8_t Cs = PA4, uint8_t Din = PA7,uint8_t  Clk = PA5, uint8_t Dc = PB8, uint8_t Rst = PB9 )
+	: cs(Cs)
+	, din(Din)
+	, clk(Clk)
+	, dc(Dc)
+	, rst(Rst)
+	, SpiConnecion ( i_4pinSpi)
+	{};
 
-	void CS(/* Sets the CS to either HIGH or LOW */uint8_t setting);
+	void CS(/* Sets the CS to either HIGH or LOW */ uint8_t setting);
 
-	void DIN(uint8_t data );
+	void DIN(uint8_t data);
 
-	void CLK(/* set clock state either HIGH or LOW */uint8_t state);
+	void CLK(/* set clock state either HIGH or LOW */ uint8_t state);
 
-	void DC(/* High or LOW */uint8_t state);
+	void DC(/* High or LOW */ uint8_t state);
 
-	void RST(/* High or low */uint8_t state);
+	void RST(/* High or low */ uint8_t state);
 };
 
 #endif
