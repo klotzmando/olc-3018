@@ -3,16 +3,13 @@
 
 
 #include "OLED_Driver.h"
-#include "font.h"
-#include "Font_5X8.h"
-#include "Font_8x16.h"
 
-class OLED_GFX : virtual public OLED_Driver {
+typedef enum  {
+  FONT_5X8 = 0,
+  FONT_8X16
+}FONT_SIZE;
 
-  private:
-    Font* font;
-    Font_5x8 font_5x8;
-    Font_8x16 font_8x16;
+class OLED_GFX : public virtual OLED_Driver {
   
   public:
       
@@ -46,3 +43,4 @@ class OLED_GFX : virtual public OLED_Driver {
   
 
 #endif
+
