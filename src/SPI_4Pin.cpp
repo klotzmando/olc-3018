@@ -7,6 +7,19 @@
 
 const SPI_Config cfg;
 
+void SPI_4Pin::Initialize()
+{
+  //Init GPIO
+  pinMode(cfg.cs, OUTPUT);
+  pinMode(cfg.rst, OUTPUT);
+  pinMode(cfg.dc, OUTPUT);
+  
+  SPI.setDataMode(SPI_MODE0);
+  SPI.setBitOrder(MSBFIRST);
+  SPI.setClockDivider(SPI_CLOCK_DIV2);
+  SPI.begin();
+}
+
 void SPI_4Pin::WriteData(uint8_t data) {
 	
   digitalWrite(cfg.dc, HIGH);
@@ -20,7 +33,6 @@ void SPI_4Pin::WriteData(uint8_t* dat_p, int length)
     SPI.transfer(dat_p[i]);
   }
   // SPI.transfer(dat_p, length);
-
 }
 
 

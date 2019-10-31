@@ -5,6 +5,11 @@ const SPI_Config cfg;
 
 void SPI_3Pin::Initialize()
 {
+     pinMode(cfg.cs, OUTPUT);
+     pinMode(cfg.rst, OUTPUT);
+     pinMode(cfg.dc, OUTPUT);
+     pinMode(cfg.clk, OUTPUT);
+     pinMode(cfg.din, OUTPUT);
      digitalWrite(cfg.dc, LOW);
 };
 

@@ -11,7 +11,11 @@ public:
 
 	virtual void WriteData(uint8_t* dat_p, int length);
 
-	virtual void Initialize(){};
+	/**
+	 * Perform the steps to prepare the SPI interface.
+	 */
+	
+	virtual void Initialize();
 
 	/**
 	 * Writes a command to the attached device as  opposed to data.
