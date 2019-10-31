@@ -86,9 +86,9 @@ extern uint8_t color_byte[2],color_fill_byte[2];
       void Invert(bool v);
       void Draw_Pixel(int16_t x, int16_t y);
       
-      void Write_Command(uint8_t dat);
-      void Write_Data(uint8_t dat);
-      void Write_Data(uint8_t* dat_p, int length);
+      void Write_Command(uint8_t dat){  oSpi->WriteCommand(dat);};
+      void Write_Data(uint8_t dat){  oSpi->WriteData(dat);};
+      void Write_Data(uint8_t* dat_p, int length){ oSpi->WriteData(dat_p, length);};
       
       void Draw_FastHLine(int16_t x, int16_t y, int16_t length);
       void Draw_FastVLine(int16_t x, int16_t y, int16_t length);

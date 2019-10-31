@@ -16,7 +16,10 @@ void SPI_4Pin::WriteData(uint8_t data) {
 void SPI_4Pin::WriteData(uint8_t* dat_p, int length)
 {
   digitalWrite(cfg.dc, HIGH);
-  SPI.transfer(dat_p, length);
+  for(int i=0; i < length; i++){
+    SPI.transfer(dat_p[i]);
+  }
+  // SPI.transfer(dat_p, length);
 
 }
 

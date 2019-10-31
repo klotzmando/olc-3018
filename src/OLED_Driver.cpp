@@ -22,20 +22,6 @@ const SPI_Config cfg;
 OLED_Driver::OLED_Driver(void):oSpi(SpiFactory::SPI_Factory(cfg))  {
 }
 
-void OLED_Driver::Write_Command(uint8_t cmd)
-{
-  oSpi->WriteCommand(cmd);
-}
-
-void OLED_Driver::Write_Data(uint8_t dat)
-{
-  oSpi->WriteData(dat);
-}
-
-void OLED_Driver::Write_Data(uint8_t *dat_p, int length)
-{
-  oSpi->WriteData(dat_p, length);
-}
 
 void OLED_Driver::Set_Color(uint16_t color)  {
   
@@ -51,13 +37,13 @@ void OLED_Driver::Set_FillColor(uint16_t color)  {
 
 void OLED_Driver::RAM_Address(void)  {
   
-  Write_Command(0x15);
-  Write_Data(0x00);
-  Write_Data(0x7f);
+  oSpi->WriteCommand(0x15);
+  oSpi->WriteData(0x00);
+  oSpi->WriteData(0x7f);
 
-  Write_Command(0x75);
-  Write_Data(0x00);
-  Write_Data(0x7f);
+  oSpi->WriteCommand(0x75);
+  oSpi->WriteData(0x00);
+  oSpi->WriteData(0x7f);
 }
 
 void OLED_Driver::Clear_Screen(void)  {
@@ -65,14 +51,14 @@ void OLED_Driver::Clear_Screen(void)  {
   int i,j;
   
   RAM_Address();
-  Write_Command(0x5C);
+  oSpi->WriteCommand(0x5C);
   for(i=0;i<128;i++)  {
     for(j=0;j<128;j++)  {
 #if INTERFACE_4WIRE_SPI
-      Write_Data(clear_byte[0]);
-      Write_Data(clear_byte[1]);
+      oSpi->WriteData(clear_byte[0]);
+      oSpi->WriteData(clear_byte[1]);
 #elif INTERFACE_3WIRE_SPI
-      Write_Data(clear_byte, 2);
+      oSpi->WriteData(clear_byte, 2);
 #endif
     }
   }
@@ -83,15 +69,15 @@ void OLED_Driver::Fill_Color(uint16_t color)  {
   
   uint16_t i,j;
   RAM_Address();
-  Write_Command(0x5C);
+  oSpi->WriteCommand(0x5C);
   Set_FillColor(color);
   for(i = 0; i < 128; i++)  {
     for(j = 0; j < 128; j++)  {
 #if INTERFACE_4WIRE_SPI
-      Write_Data(color_fill_byte[0]);
-      Write_Data(color_fill_byte[1]);
+      oSpi->WriteData(color_fill_byte[0]);
+      oSpi->WriteData(color_fill_byte[1]);
 #elif INTERFACE_3WIRE_SPI
-      Write_Data(color_fill_byte, 2);
+      oSpi->WriteData(color_fill_byte, 2);
 #endif
 
     }
@@ -103,26 +89,26 @@ void OLED_Driver::Set_Coordinate(uint16_t x, uint16_t y)  {
   if ((x >= SSD1351_WIDTH) || (y >= SSD1351_HEIGHT))
     return;
   //Set x and y coordinate
-  Write_Command(SSD1351_CMD_SETCOLUMN);
-  Write_Data(x);
-  Write_Data(SSD1351_WIDTH-1);
+  oSpi->WriteCommand(SSD1351_CMD_SETCOLUMN);
+  oSpi->WriteData(x);
+  oSpi->WriteData(SSD1351_WIDTH-1);
   
-  Write_Command(SSD1351_CMD_SETROW);
-  Write_Data(y);
-  Write_Data(SSD1351_HEIGHT-1);
+  oSpi->WriteCommand(SSD1351_CMD_SETROW);
+  oSpi->WriteData(y);
+  oSpi->WriteData(SSD1351_HEIGHT-1);
   
-  Write_Command(SSD1351_CMD_WRITERAM);
+  oSpi->WriteCommand(SSD1351_CMD_WRITERAM);
 }
 
 void OLED_Driver::Set_Address(uint8_t column, uint8_t row)  {
   
-  Write_Command(SSD1351_CMD_SETCOLUMN);  
-  Write_Data(column);  //X start 
-  Write_Data(column); //X end 
-  Write_Command(SSD1351_CMD_SETROW); 
-  Write_Data(row);  //Y start 
-  Write_Data(row+7);  //Y end 
-  Write_Command(SSD1351_CMD_WRITERAM); 
+  oSpi->WriteCommand(SSD1351_CMD_SETCOLUMN);  
+  oSpi->WriteData(column);  //X start 
+  oSpi->WriteData(column); //X end 
+  oSpi->WriteCommand(SSD1351_CMD_SETROW); 
+  oSpi->WriteData(row);  //Y start 
+  oSpi->WriteData(row+7);  //Y end 
+  oSpi->WriteCommand(SSD1351_CMD_WRITERAM); 
 }
 
 void OLED_Driver::Write_text(uint8_t dat) {
@@ -133,13 +119,13 @@ void OLED_Driver::Write_text(uint8_t dat) {
   {
     if (dat & 0x01)
     {
-      Write_Data(color_byte[0]);
-      Write_Data(color_byte[1]);
+      oSpi->WriteData(color_byte[0]);
+      oSpi->WriteData(color_byte[1]);
     }
     else
     {
-      Write_Data(0x00);
-      Write_Data(0x00);
+      oSpi->WriteData(0x00);
+      oSpi->WriteData(0x00);
     }
     dat >>= 1;
   }
@@ -148,9 +134,9 @@ void OLED_Driver::Write_text(uint8_t dat) {
 void  OLED_Driver::Invert(bool v) {
   
   if (v)
-    Write_Command(SSD1351_CMD_INVERTDISPLAY);
+    oSpi->WriteCommand(SSD1351_CMD_INVERTDISPLAY);
   else
-    Write_Command(SSD1351_CMD_NORMALDISPLAY);
+    oSpi->WriteCommand(SSD1351_CMD_NORMALDISPLAY);
 }
 
 void OLED_Driver::Draw_Pixel(int16_t x, int16_t y)
@@ -163,10 +149,10 @@ void OLED_Driver::Draw_Pixel(int16_t x, int16_t y)
   
   // transfer data
 #if INTERFACE_4WIRE_SPI
-  Write_Data(color_byte[0]);
-  Write_Data(color_byte[1]);
+  oSpi->WriteData(color_byte[0]);
+  oSpi->WriteData(color_byte[1]);
 #elif INTERFACE_3WIRE_SPI
-  Write_Data(color_byte, 2);
+  oSpi->WriteData(color_byte, 2);
 #endif
   
 }
@@ -181,73 +167,73 @@ void OLED_Driver::Device_Init(void) {
   digitalWrite(cfg.rst, HIGH);
   delay(500);
     
-  Write_Command(0xfd);  // command lock
-  Write_Data(0x12);
-  Write_Command(0xfd);  // command lock
-  Write_Data(0xB1);
+  oSpi->WriteCommand(0xfd);  // command lock
+  oSpi->WriteData(0x12);
+  oSpi->WriteCommand(0xfd);  // command lock
+  oSpi->WriteData(0xB1);
 
-  Write_Command(0xae);  // display off
-  Write_Command(0xa4);  // Normal Display mode
+  oSpi->WriteCommand(0xae);  // display off
+  oSpi->WriteCommand(0xa4);  // Normal Display mode
 
-  Write_Command(0x15);  //set column address
-  Write_Data(0x00); //column address start 00
-  Write_Data(0x7f); //column address end 95
-  Write_Command(0x75);  //set row address
-  Write_Data(0x00); //row address start 00
-  Write_Data(0x7f); //row address end 63  
+  oSpi->WriteCommand(0x15);  //set column address
+  oSpi->WriteData(0x00); //column address start 00
+  oSpi->WriteData(0x7f); //column address end 95
+  oSpi->WriteCommand(0x75);  //set row address
+  oSpi->WriteData(0x00); //row address start 00
+  oSpi->WriteData(0x7f); //row address end 63  
 
-  Write_Command(0xB3);
-  Write_Data(0xF1);
+  oSpi->WriteCommand(0xB3);
+  oSpi->WriteData(0xF1);
 
-  Write_Command(0xCA);  
-  Write_Data(0x7F);
+  oSpi->WriteCommand(0xCA);  
+  oSpi->WriteData(0x7F);
 
-  Write_Command(0xa0);  //set re-map & data format
-  Write_Data(0x74); //Horizontal address increment
+  oSpi->WriteCommand(0xa0);  //set re-map & data format
+  oSpi->WriteData(0x74); //Horizontal address increment
             //74
-  Write_Command(0xa1);  //set display start line
-  Write_Data(0x00); //start 00 line
+  oSpi->WriteCommand(0xa1);  //set display start line
+  oSpi->WriteData(0x00); //start 00 line
 
-  Write_Command(0xa2);  //set display offset
-  Write_Data(0x00);
+  oSpi->WriteCommand(0xa2);  //set display offset
+  oSpi->WriteData(0x00);
 
-  Write_Command(0xAB);  
-  Write_Command(0x01);  
+  oSpi->WriteCommand(0xAB);  
+  oSpi->WriteCommand(0x01);  
 
-  Write_Command(0xB4);  
-  Write_Data(0xA0);   
-  Write_Data(0xB5);  
-  Write_Data(0x55);    
+  oSpi->WriteCommand(0xB4);  
+  oSpi->WriteData(0xA0);   
+  oSpi->WriteData(0xB5);  
+  oSpi->WriteData(0x55);    
 
-  Write_Command(0xC1);  
-  Write_Data(0xC8); 
-  Write_Data(0x80);
-  Write_Data(0xC0);
+  oSpi->WriteCommand(0xC1);  
+  oSpi->WriteData(0xC8); 
+  oSpi->WriteData(0x80);
+  oSpi->WriteData(0xC0);
 
-  Write_Command(0xC7);  
-  Write_Data(0x0F);
+  oSpi->WriteCommand(0xC7);  
+  oSpi->WriteData(0x0F);
 
-  Write_Command(0xB1);  
-  Write_Data(0x32);
+  oSpi->WriteCommand(0xB1);  
+  oSpi->WriteData(0x32);
 
-  Write_Command(0xB2);  
-  Write_Data(0xA4);
-  Write_Data(0x00);
-  Write_Data(0x00);
+  oSpi->WriteCommand(0xB2);  
+  oSpi->WriteData(0xA4);
+  oSpi->WriteData(0x00);
+  oSpi->WriteData(0x00);
 
-  Write_Command(0xBB);  
-  Write_Data(0x17);
+  oSpi->WriteCommand(0xBB);  
+  oSpi->WriteData(0x17);
 
-  Write_Command(0xB6);  
-  Write_Data(0x01);
+  oSpi->WriteCommand(0xB6);  
+  oSpi->WriteData(0x01);
 
-  Write_Command(0xBE);  
-  Write_Data(0x05);
+  oSpi->WriteCommand(0xBE);  
+  oSpi->WriteData(0x05);
 
-  Write_Command(0xA6);
+  oSpi->WriteCommand(0xA6);
 
   Clear_Screen();
-  Write_Command(0xaf);   //display on
+  oSpi->WriteCommand(0xaf);   //display on
 }
 
   
@@ -267,18 +253,18 @@ void OLED_Driver::Draw_FastHLine(int16_t x, int16_t y, int16_t length) {
     return;
 
   // set location
-  Write_Command(SSD1351_CMD_SETCOLUMN);
-  Write_Data(x);
-  Write_Data(x+length-1);
-  Write_Command(SSD1351_CMD_SETROW);
-  Write_Data(y);
-  Write_Data(y);
+  oSpi->WriteCommand(SSD1351_CMD_SETCOLUMN);
+  oSpi->WriteData(x);
+  oSpi->WriteData(x+length-1);
+  oSpi->WriteCommand(SSD1351_CMD_SETROW);
+  oSpi->WriteData(y);
+  oSpi->WriteData(y);
   // fill!
-  Write_Command(SSD1351_CMD_WRITERAM);  
+  oSpi->WriteCommand(SSD1351_CMD_WRITERAM);  
 
   for (uint16_t i=0; i < uint16_t( length); i++)  {
-    Write_Data(color_byte[0]);
-    Write_Data(color_byte[1]);
+    oSpi->WriteData(color_byte[0]);
+    oSpi->WriteData(color_byte[1]);
   }
 }
   
@@ -298,21 +284,21 @@ void OLED_Driver::Draw_FastVLine(int16_t x, int16_t y, int16_t length)  {
     return;
 
   // set location
-  Write_Command(SSD1351_CMD_SETCOLUMN);
-  Write_Data(x);
-  Write_Data(x);
-  Write_Command(SSD1351_CMD_SETROW);
-  Write_Data(y);
-  Write_Data(y+length-1);
+  oSpi->WriteCommand(SSD1351_CMD_SETCOLUMN);
+  oSpi->WriteData(x);
+  oSpi->WriteData(x);
+  oSpi->WriteCommand(SSD1351_CMD_SETROW);
+  oSpi->WriteData(y);
+  oSpi->WriteData(y+length-1);
   // fill!
-  Write_Command(SSD1351_CMD_WRITERAM);  
+  oSpi->WriteCommand(SSD1351_CMD_WRITERAM);  
     
   for (i = 0; i < length; i++)  {
 #if INTERFACE_4WIRE_SPI
-    Write_Data(color_byte[0]);
-    Write_Data(color_byte[1]);
+    oSpi->WriteData(color_byte[0]);
+    oSpi->WriteData(color_byte[1]);
 #elif INTERFACE_3WIRE_SPI
-    Write_Data(color_byte, 2);
+    oSpi->WriteData(color_byte, 2);
 #endif
   }
 }
@@ -334,8 +320,8 @@ void OLED_Driver::Display_Interface(void)
         color = BLACK;
       
       Set_Color(color);
-      Write_Data(color_byte[0]);
-      Write_Data(color_byte[1]);
+      oSpi->WriteData(color_byte[0]);
+      oSpi->WriteData(color_byte[1]);
     }
   }
 
@@ -348,8 +334,8 @@ void OLED_Driver::Display_Interface(void)
         color = BLACK;
       
       Set_Color(color);
-      Write_Data(color_byte[0]);
-      Write_Data(color_byte[1]);
+      oSpi->WriteData(color_byte[0]);
+      oSpi->WriteData(color_byte[1]);
     }
   }
 
@@ -362,18 +348,18 @@ void OLED_Driver::Display_Interface(void)
         color = BLACK;
       
       Set_Color(color);
-      Write_Data(color_byte[0]);
-      Write_Data(color_byte[1]);      
+      oSpi->WriteData(color_byte[0]);
+      oSpi->WriteData(color_byte[1]);      
     }
   }
 
-  Write_Command(SSD1351_CMD_SETCOLUMN);  
-  Write_Data(80);  //X start 
-  Write_Data(80+8*5-1); //X end 
-  Write_Command(SSD1351_CMD_SETROW); 
-  Write_Data(90);  //Y start 
-  Write_Data(90+16-1);  //Y end 
-  Write_Command(SSD1351_CMD_WRITERAM); 
+  oSpi->WriteCommand(SSD1351_CMD_SETCOLUMN);  
+  oSpi->WriteData(80);  //X start 
+  oSpi->WriteData(80+8*5-1); //X end 
+  oSpi->WriteCommand(SSD1351_CMD_SETROW); 
+  oSpi->WriteData(90);  //Y start 
+  oSpi->WriteData(90+16-1);  //Y end 
+  oSpi->WriteCommand(SSD1351_CMD_WRITERAM); 
   
   for(i = 0 ; i < 16 ; i++) {
     for(j = 0; j < 8*5; j++)  {
@@ -383,18 +369,18 @@ void OLED_Driver::Display_Interface(void)
         color = BLACK;
       
       Set_Color(color);
-      Write_Data(color_byte[0]);
-      Write_Data(color_byte[1]);      
+      oSpi->WriteData(color_byte[0]);
+      oSpi->WriteData(color_byte[1]);      
     }
   }
 
-  Write_Command(SSD1351_CMD_SETCOLUMN);  
-  Write_Data(0);  //X start 
-  Write_Data(0+8*9-1); //X end 
-  Write_Command(SSD1351_CMD_SETROW); 
-  Write_Data(90);  //Y start 
-  Write_Data(90+16-1);  //Y end 
-  Write_Command(SSD1351_CMD_WRITERAM); 
+  oSpi->WriteCommand(SSD1351_CMD_SETCOLUMN);  
+  oSpi->WriteData(0);  //X start 
+  oSpi->WriteData(0+8*9-1); //X end 
+  oSpi->WriteCommand(SSD1351_CMD_SETROW); 
+  oSpi->WriteData(90);  //Y start 
+  oSpi->WriteData(90+16-1);  //Y end 
+  oSpi->WriteCommand(SSD1351_CMD_WRITERAM); 
   
   for(i = 0 ; i < 16 ; i++) {
     for(j = 0; j < 8*9; j++)  {
@@ -404,8 +390,8 @@ void OLED_Driver::Display_Interface(void)
         color = BLACK;
       
       Set_Color(color);
-      Write_Data(color_byte[0]);
-      Write_Data(color_byte[1]);      
+      oSpi->WriteData(color_byte[0]);
+      oSpi->WriteData(color_byte[1]);      
     }
   }
 
@@ -418,8 +404,8 @@ void OLED_Driver::Display_Interface(void)
         color = BLACK;
       
       Set_Color(color);
-      Write_Data(color_byte[0]);
-      Write_Data(color_byte[1]);
+      oSpi->WriteData(color_byte[0]);
+      oSpi->WriteData(color_byte[1]);
     }
   }
 
@@ -439,8 +425,8 @@ void OLED_Driver::Display_Interface(void)
         color = BLACK;
       }
       Set_Color(color);
-      Write_Data(color_byte[0]);
-      Write_Data(color_byte[1]);
+      oSpi->WriteData(color_byte[0]);
+      oSpi->WriteData(color_byte[1]);
     }
   }
 
