@@ -5,10 +5,8 @@
 /**
  * This is a container for the  I/O pins used to interface to a device connected via SPI.
  */
-class SPI_Config
+struct SPI_Config
 {
-
-public:
 	/**
 	 * Device chip select
 	 */
@@ -40,21 +38,6 @@ public:
 	SPI_Config(uint8_t Cs = PA4, uint8_t Din = PA7, uint8_t Clk = PA5, uint8_t Dc = PB8, uint8_t Rst = PB9)
 		: cs(Cs), din(Din), clk(Clk), dc(Dc), rst(Rst), SpiConnecion(i_4pinSpi){};
 
-	void CS(/* Sets the CS to either HIGH or LOW */ uint8_t setting);
-
-	inline void DIN(uint8_t data)
-	{
-		digitalWrite(din, data);
-	};
-
-	inline void CLK(/* set clock state either HIGH or LOW */ uint8_t state)
-	{
-		digitalWrite(clk, state);
-	};
-
-	void DC(/* High or LOW */ uint8_t state);
-
-	void RST(/* High or low */ uint8_t state);
 };
 
 #endif
