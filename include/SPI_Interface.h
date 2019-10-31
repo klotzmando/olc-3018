@@ -6,10 +6,6 @@
 
 
 class SPI_Interface {
-
-protected:
-	SPI_Config cfg;
-
 public:
 	/**
 	 * Writes data to the interface as opposed to writing commands to the interface.
@@ -24,10 +20,9 @@ public:
 	 */
 	virtual void WriteCommand(uint8_t cmd) = 0;
 
-	SPI_Interface(SPI_Config configuration )
-	: cfg(configuration)
-	{};
+	SPI_Interface(){};
 
+	virtual void Initialize() = 0;
 };
 
 #endif

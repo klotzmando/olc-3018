@@ -8,7 +8,7 @@
 class SPI_Config
 {
 
-private:
+public:
 	/**
 	 * Device chip select
 	 */

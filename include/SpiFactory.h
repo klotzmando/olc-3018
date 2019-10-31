@@ -10,7 +10,7 @@ class SpiFactory
  public:
      static SPI_Interface *SPI_Factory(const SPI_Config cfg)
      {
-         return new SPI_4Pin( cfg);
+         return new SPI_4Pin( );
      }
  };
  #endif

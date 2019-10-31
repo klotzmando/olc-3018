@@ -35,7 +35,6 @@ void setup()  {
 
   oled.Device_Init();
   
-  oled.Display_Interface();
 }
 
 

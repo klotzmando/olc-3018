@@ -47,7 +47,12 @@ void GFX_Test::RunTest()
         testtriangles();
         break;
     case 12:
+        oled.Display_Interface();
+        delay(2000); // temporary to allow for better inspection
+        break;
+    case 13:
         testNumber = 0;
+        break;
     }
 }
 

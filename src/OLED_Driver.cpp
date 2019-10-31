@@ -1,5 +1,6 @@
 #include "OLED_Driver.h"
 #include "ASCII_Font.h"
+#include "SpiFactory.h"
 
 
 
@@ -13,137 +14,28 @@
   #error "SPI Setting Error !!"
 #endif
 
+uint8_t color_byte[2];
+uint8_t color_fill_byte[2];
+const uint8_t clear_byte[] = {0x00, 0x00};
 
-
-uint8_t color_byte[2],color_fill_byte[2];
-
-
-OLED_Driver::OLED_Driver(void)  {
+const SPI_Config cfg;
+OLED_Driver::OLED_Driver(void):oSpi(SpiFactory::SPI_Factory(cfg))  {
 }
 
-void OLED_Driver::OLED_CS(uint8_t x)  {
-
-  digitalWrite(oled_cs, x);
+void OLED_Driver::Write_Command(uint8_t cmd)
+{
+  oSpi->WriteCommand(cmd);
 }
 
-void OLED_Driver::OLED_RST(uint8_t x) {
-
-  digitalWrite(oled_rst, x);
+void OLED_Driver::Write_Data(uint8_t dat)
+{
+  oSpi->WriteData(dat);
 }
 
-void OLED_Driver::OLED_DC(uint8_t x)  {
-
-  digitalWrite(oled_dc, x);
+void OLED_Driver::Write_Data(uint8_t *dat_p, int length)
+{
+  oSpi->WriteData(dat_p, length);
 }
-
-inline void OLED_Driver::OLED_SCK(uint8_t x) {
-
-  digitalWrite(oled_sck, x);
-}
-inline void OLED_Driver::OLED_DIN(uint8_t x) {
-
-  digitalWrite(oled_din, x);
-}
-
-
-void OLED_Driver::Write_Command(uint8_t cmd)  {
-
-//  OLED_CS(LOW);
-
-#if  INTERFACE_4WIRE_SPI
-
-  OLED_DC(LOW);
-  SPI.transfer(cmd);
-  OLED_DC(HIGH);
-
-#elif INTERFACE_3WIRE_SPI
-
-  uint8_t i;
-
-  OLED_SCK(LOW);
-  OLED_DIN(LOW);
-  OLED_SCK(HIGH);
-
-  for(i = 0x80; i > 0; i >>= 1) {
-
-    OLED_SCK(LOW);
-    
-    if(cmd & i)
-      OLED_DIN(HIGH);
-    else
-      OLED_DIN(LOW);
-    
-    OLED_SCK(HIGH);
-  }
-
-#endif
-
-//  OLED_CS(HIGH);
-}
-
-void OLED_Driver::Write_Data(uint8_t dat) {
-
-//  OLED_CS(LOW);
-
-#if  INTERFACE_4WIRE_SPI
-
-  OLED_DC(HIGH);
-  SPI.transfer(dat);
-  OLED_DC(LOW);
-
-#elif INTERFACE_3WIRE_SPI
-
-  uint8_t i;
-
-  OLED_SCK(LOW);
-  OLED_DIN(HIGH);
-  OLED_SCK(HIGH);
-
-  for(i = 0x80; i > 0; i >>= 1) {
-
-    OLED_SCK(LOW);
-    
-    if(dat & i)
-      OLED_DIN(HIGH);
-    else
-      OLED_DIN(LOW);
-    OLED_SCK(HIGH);
-  }
-
-#endif
-
-//  OLED_CS(HIGH);
-
-}
-
-#if INTERFACE_3WIRE_SPI
-
-void OLED_Driver::Write_Data(uint8_t* dat_p, int length) {
-
-  uint16_t i;
-  uint8_t j;
-
-
-
-  for(i = 0; i < length; i++) {
-
-    OLED_SCK(LOW);
-    OLED_DIN(HIGH);
-    OLED_SCK(HIGH);
-  
-    for(j = 0x80; j > 0; j >>= 1) {
-
-      OLED_SCK(LOW);
-      if(dat_p[i] & j)
-        OLED_DIN(HIGH);
-      else
-        OLED_DIN(LOW);
-      OLED_SCK(HIGH);
-    }
-  }
-}
-
-#endif
 
 void OLED_Driver::Set_Color(uint16_t color)  {
   
@@ -172,7 +64,6 @@ void OLED_Driver::Clear_Screen(void)  {
   
   int i,j;
   
-  uint8_t clear_byte[] = {0x00, 0x00};
   RAM_Address();
   Write_Command(0x5C);
   for(i=0;i<128;i++)  {
@@ -237,17 +128,16 @@ void OLED_Driver::Set_Address(uint8_t column, uint8_t row)  {
 void OLED_Driver::Write_text(uint8_t dat) {
     
   uint8_t i;
-    
-  for(i=0;i<8;i++)  {
-    if (dat & 0x01) {
-#if INTERFACE_4WIRE_SPI
+
+  for (i = 0; i < 8; i++)
+  {
+    if (dat & 0x01)
+    {
       Write_Data(color_byte[0]);
       Write_Data(color_byte[1]);
-#elif INTERFACE_3WIRE_SPI
-      Write_Data(color_byte, 2);
-#endif
     }
-    else  {
+    else
+    {
       Write_Data(0x00);
       Write_Data(0x00);
     }
@@ -284,17 +174,11 @@ void OLED_Driver::Draw_Pixel(int16_t x, int16_t y)
 
   
 void OLED_Driver::Device_Init(void) {
-
-#if INTERFACE_3WIRE_SPI
-    
-    OLED_DC(LOW);
-  
-#endif
-
-  OLED_CS(LOW);
-  OLED_RST(LOW);
+  oSpi->Initialize();
+  digitalWrite(cfg.cs, LOW);
+  digitalWrite(cfg.rst, LOW);
   delay(500);
-  OLED_RST(HIGH);
+  digitalWrite(cfg.rst, HIGH);
   delay(500);
     
   Write_Command(0xfd);  // command lock
@@ -433,13 +317,16 @@ void OLED_Driver::Draw_FastVLine(int16_t x, int16_t y, int16_t length)  {
   }
 }
 
+void OLED_Driver::Display_Interface(void)
+{
 
-void OLED_Driver::Display_Interface(void) {
-  
-  uint16_t i,j,color;
-  
-  Set_Coordinate(0,1);
-  for(i = 0 ; i < 8 ; i++)  {
+  uint16_t i, j, color;
+
+  Fill_Color(BLACK);
+
+  Set_Coordinate(0, 1);
+  for (i = 0; i < 8; i++)
+  {
     for(j = 0; j < 128; j++) {
       if((interface_1[(i*128+j)/8]>>((i*128+j)%8))&0x01)  
         color = GREEN+((i*128+j)<<11);      

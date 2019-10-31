@@ -3,6 +3,7 @@
 
 #include "stdlib.h"
 #include "SPI.h"
+#include "SPI_Interface.h"
 
 extern uint8_t color_byte[2],color_fill_byte[2];
 
@@ -65,15 +66,12 @@ extern uint8_t color_byte[2],color_fill_byte[2];
 #define WHITE   0xFFFF
 
   class OLED_Driver {
+    private:
+      SPI_Interface *oSpi;
+
     public: 
       OLED_Driver(void);
 
-      void OLED_CS(uint8_t x);
-      void OLED_RST(uint8_t x);
-      void OLED_DC(uint8_t x);
-      inline void OLED_SCK(uint8_t x);
-      inline void OLED_DIN(uint8_t x);
-      
       void Device_Init(void);
       void Clear_Screen(void);
       void Fill_Color(uint16_t color);
