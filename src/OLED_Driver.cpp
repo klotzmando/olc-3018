@@ -2,18 +2,6 @@
 #include "ASCII_Font.h"
 #include "SpiFactory.h"
 
-
-
-#if INTERFACE_4WIRE_SPI
-  #if INTERFACE_3WIRE_SPI
-    #error "SPI Setting Error !!"
-  #endif
-#elif INTERFACE_3WIRE_SPI
-
-#else
-  #error "SPI Setting Error !!"
-#endif
-
 uint8_t color_byte[2];
 uint8_t color_fill_byte[2];
 const uint8_t clear_byte[] = {0x00, 0x00};
@@ -54,12 +42,7 @@ void OLED_Driver::Clear_Screen(void)  {
   oSpi->WriteCommand(0x5C);
   for(i=0;i<128;i++)  {
     for(j=0;j<128;j++)  {
-#if INTERFACE_4WIRE_SPI
-      oSpi->WriteData(clear_byte[0]);
-      oSpi->WriteData(clear_byte[1]);
-#elif INTERFACE_3WIRE_SPI
-      oSpi->WriteData(clear_byte, 2);
-#endif
+      oSpi->WriteData((uint8_t*)clear_byte, 2);
     }
   }
 }
@@ -73,12 +56,7 @@ void OLED_Driver::Fill_Color(uint16_t color)  {
   Set_FillColor(color);
   for(i = 0; i < 128; i++)  {
     for(j = 0; j < 128; j++)  {
-#if INTERFACE_4WIRE_SPI
-      oSpi->WriteData(color_fill_byte[0]);
-      oSpi->WriteData(color_fill_byte[1]);
-#elif INTERFACE_3WIRE_SPI
       oSpi->WriteData(color_fill_byte, 2);
-#endif
 
     }
   }
@@ -148,13 +126,7 @@ void OLED_Driver::Draw_Pixel(int16_t x, int16_t y)
   Set_Address(x, y);
   
   // transfer data
-#if INTERFACE_4WIRE_SPI
-  oSpi->WriteData(color_byte[0]);
-  oSpi->WriteData(color_byte[1]);
-#elif INTERFACE_3WIRE_SPI
   oSpi->WriteData(color_byte, 2);
-#endif
-  
 }
   
 
@@ -294,12 +266,7 @@ void OLED_Driver::Draw_FastVLine(int16_t x, int16_t y, int16_t length)  {
   oSpi->WriteCommand(SSD1351_CMD_WRITERAM);  
     
   for (i = 0; i < length; i++)  {
-#if INTERFACE_4WIRE_SPI
-    oSpi->WriteData(color_byte[0]);
-    oSpi->WriteData(color_byte[1]);
-#elif INTERFACE_3WIRE_SPI
     oSpi->WriteData(color_byte, 2);
-#endif
   }
 }
 

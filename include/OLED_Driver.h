@@ -50,12 +50,6 @@ extern uint8_t color_byte[2],color_fill_byte[2];
 
 #define swap(a, b) { uint8_t t = a; a = b; b = t; }
 
-#define oled_cs   PA4 // Orange : ATmel 10
-#define oled_rst  PB9 // White  : ATmel  8
-#define oled_dc   PB8 // Green  : ATmel  7
-#define oled_sck  PA5 // Yellow : Atmel 13
-#define oled_din  PA7 // Blue   : Atmel 11
-
 #define BLACK   0x0000
 #define BLUE    0x001F
 #define RED     0xF800
