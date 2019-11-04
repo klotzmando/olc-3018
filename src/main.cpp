@@ -9,7 +9,7 @@ void setup()  {
 
   //Init UART
   Serial.begin(115200);
-  oled.Device_Init();
+  oled.DeviceInit();
 }
 
 void loop() {
