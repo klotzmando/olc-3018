@@ -9,30 +9,33 @@ OLED_Driver::OLED_Driver(void):oSpi(SpiFactory::SPI_Factory(cfg))  {
 
 void OLED_Driver::SetFGColor(uint16_t color)  {
   
-  foregroundColor[0] = highByte(color); //(uint8_t)(color >> 8);
-  foregroundColor[1] = lowByte(color);  //(uint8_t)(color & 0x00ff);
+  FGColor[0] = highByte(color); 
+  FGColor[1] = lowByte(color); 
 }
 
 
 void OLED_Driver::SetBGColor(/* The RGB value for the color. */uint16_t color) {
-  backgroundColor[0] = highByte(color); //(uint8_t)(color >> 8);
-  backgroundColor[1] = lowByte(color);  //(uint8_t)(color & 0x00ff);
+  BGColor[0] = highByte(color); 
+  BGColor[1] = lowByte(color); 
 }
 
 
 void OLED_Driver::SetFillColor(uint16_t color)  {
   
-  color_fill_byte[0] = highByte(color);   //(uint8_t)(color >> 8);
-  color_fill_byte[1] = lowByte(color);    //(uint8_t)(color & 0x00ff);
+  color_fill_byte[0] = highByte(color); 
+  color_fill_byte[1] = lowByte(color); 
 }
 
+// RAMAddress
+// Not sure why this is called "RamAddress", all it does is set the display
+// entry range to the entire display
 void OLED_Driver::RAMAddress(void)  {
   
-  oSpi->WriteCommand(0x15);
+  oSpi->WriteCommand( SSD1351_CMD_SETCOLUMN );
   oSpi->WriteData(0x00);
   oSpi->WriteData(0x7f);
 
-  oSpi->WriteCommand(0x75);
+  oSpi->WriteCommand(SSD1351_CMD_SETROW);
   oSpi->WriteData(0x00);
   oSpi->WriteData(0x7f);
 }
@@ -42,10 +45,10 @@ void OLED_Driver::ClearScreen(void)  {
   int i,j;
   
   RAMAddress();
-  oSpi->WriteCommand(0x5C);
+  oSpi->WriteCommand( SSD1351_CMD_WRITERAM );
   for(i=0;i<128;i++)  {
     for(j=0;j<128;j++)  {
-      oSpi->WriteData((uint8_t*)backgroundColor,2); 
+      oSpi->WriteData((uint8_t*)BGColor,2); 
     }
   }
 }
@@ -55,7 +58,7 @@ void OLED_Driver::FillColor(uint16_t color)  {
   
   uint16_t i,j;
   RAMAddress();
-  oSpi->WriteCommand(0x5C);
+  oSpi->WriteCommand( SSD1351_CMD_WRITERAM );
   SetFillColor(color);
   for(i = 0; i < 128; i++)  {
     for(j = 0; j < 128; j++)  {
@@ -99,7 +102,7 @@ void OLED_Driver::Writetext(uint8_t dat) {
   {
     if (dat & 0x01)
     {
-      oSpi->WriteData(foregroundColor, 2);
+      oSpi->WriteData(FGColor, 2);
     }
     else
     {
@@ -127,17 +130,17 @@ void OLED_Driver::DrawPixel(int16_t x, int16_t y)
   SetAddress(x, y);
   
   // transfer data
-  oSpi->WriteData(foregroundColor, 2);
+  oSpi->WriteData(FGColor, 2);
 }
 
 void OLED_Driver::DrawPixel(void)
 {
-  oSpi->WriteData(foregroundColor, 2);
+  oSpi->WriteData(FGColor, 2);
 }
 
 void OLED_Driver::ErasePixel(void)
 {
-  oSpi->WriteData(backgroundColor, 2);
+  oSpi->WriteData(BGColor, 2);
 }
 
 void OLED_Driver::DeviceInit(void) {
@@ -148,72 +151,79 @@ void OLED_Driver::DeviceInit(void) {
   digitalWrite(cfg.rst, HIGH);
   delay(500);
     
-  oSpi->WriteCommand(0xfd);  // command lock
+  oSpi->WriteCommand( SSD1351_CMD_COMMANDLOCK );  // command lock
   oSpi->WriteData(0x12);
-  oSpi->WriteCommand(0xfd);  // command lock
+  oSpi->WriteCommand( SSD1351_CMD_COMMANDLOCK );  // command lock
   oSpi->WriteData(0xB1);
 
-  oSpi->WriteCommand(0xae);  // display off
-  oSpi->WriteCommand(0xa4);  // Normal Display mode
+  oSpi->WriteCommand( SSD1351_CMD_DISPLAYOFF );  // display off
+  oSpi->WriteCommand( SSD1351_CMD_DISPLAYALLOFF );  // Normal Display mode
 
-  oSpi->WriteCommand(0x15);  //set column address
+// Define the area of the display which will be access during write operations.
+// The following sets this region to the total display.
+  oSpi->WriteCommand( SSD1351_CMD_SETCOLUMN );  //set column address
   oSpi->WriteData(0x00); //column address start 00
-  oSpi->WriteData(0x7f); //column address end 95
-  oSpi->WriteCommand(0x75);  //set row address
+  oSpi->WriteData(0x7f); //column address end 127
+  oSpi->WriteCommand( SSD1351_CMD_SETROW );  //set row address
   oSpi->WriteData(0x00); //row address start 00
-  oSpi->WriteData(0x7f); //row address end 63  
+  oSpi->WriteData(0x7f); //row address end 127  
 
-  oSpi->WriteCommand(0xB3);
+  oSpi->WriteCommand( SSD1351_CMD_CLOCKDIV );
   oSpi->WriteData(0xF1);
 
-  oSpi->WriteCommand(0xCA);  
+// reset the MUX ratio
+  oSpi->WriteCommand( SSD1351_CMD_MUXRATIO );  
   oSpi->WriteData(0x7F); 
-  oSpi->WriteCommand(0xa0);  //set re-map & data format
+
+
+  oSpi->WriteCommand( SSD1351_CMD_SETREMAP);  //set re-map & data format
   oSpi->WriteData(0x74); //Horizontal address increment
             //74
-  oSpi->WriteCommand(0xa1);  //set display start line
+  oSpi->WriteCommand( SSD1351_CMD_STARTLINE );  //set display start line
   oSpi->WriteData(0x00); //start 00 line
 
-  oSpi->WriteCommand(0xa2);  //set display offset
+  oSpi->WriteCommand( SSD1351_CMD_DISPLAYOFFSET );  //set display offset
   oSpi->WriteData(0x00);
 
-  oSpi->WriteCommand(0xAB);  
-  oSpi->WriteCommand(0x01);  
+// the following is a two byte command, hence the command is followed by
+// a second writecommand to finish.
+  oSpi->WriteCommand( SSD1351_CMD_FUNCTIONSELECT );  
+  oSpi->WriteCommand(0x01);  // turn-on the internal voltage requlator
 
-  oSpi->WriteCommand(0xB4);  
-  oSpi->WriteData(0xA0);   
+  oSpi->WriteCommand( SSD1351_CMD_SETVSL );  
+  oSpi->WriteData( 0xAB );   
   oSpi->WriteData(0xB5);  
   oSpi->WriteData(0x55);    
 
-  oSpi->WriteCommand(0xC1);  
+  oSpi->WriteCommand( SSD1351_CMD_CONTRASTABC );  
   oSpi->WriteData(0xC8); 
   oSpi->WriteData(0x80);
   oSpi->WriteData(0xC0);
 
-  oSpi->WriteCommand(0xC7);  
+  oSpi->WriteCommand( SSD1351_CMD_CONTRASTMASTER );  
   oSpi->WriteData(0x0F);
 
-  oSpi->WriteCommand(0xB1);  
+  oSpi->WriteCommand( SSD1351_CMD_PRECHARGE );  
   oSpi->WriteData(0x32);
 
-  oSpi->WriteCommand(0xB2);  
+  oSpi->WriteCommand( SSD1351_CMD_DISPLAYENHANCE  );  
   oSpi->WriteData(0xA4);
   oSpi->WriteData(0x00);
   oSpi->WriteData(0x00);
 
-  oSpi->WriteCommand(0xBB);  
+  oSpi->WriteCommand( SSD1351_CMD_PRECHARGELEVEL );  
   oSpi->WriteData(0x17);
 
-  oSpi->WriteCommand(0xB6);  
+  oSpi->WriteCommand( SSD1351_CMD_PRECHARGE2 );  
   oSpi->WriteData(0x01);
 
-  oSpi->WriteCommand(0xBE);  
+  oSpi->WriteCommand( SSD1351_CMD_VCOMH );  
   oSpi->WriteData(0x05);
 
-  oSpi->WriteCommand(0xA6);
+  oSpi->WriteCommand( SSD1351_CMD_NORMALDISPLAY );
 
   ClearScreen();
-  oSpi->WriteCommand(0xaf);   //display on
+  oSpi->WriteCommand( SSD1351_CMD_DISPLAYON );   //display on
 }
 
   
@@ -243,7 +253,7 @@ void OLED_Driver::DrawFastHLine(int16_t x, int16_t y, int16_t length) {
   oSpi->WriteCommand(SSD1351_CMD_WRITERAM);  
 
   for (uint16_t i=0; i < uint16_t( length); i++)  {
-    oSpi->WriteData(foregroundColor, 2);
+    oSpi->WriteData(FGColor, 2);
   }
 }
   
@@ -273,7 +283,7 @@ void OLED_Driver::DrawFastVLine(int16_t x, int16_t y, int16_t length)  {
   oSpi->WriteCommand(SSD1351_CMD_WRITERAM);  
     
   for (i = 0; i < length; i++)  {
-    oSpi->WriteData(foregroundColor, 2);
+    oSpi->WriteData(FGColor, 2);
   }
 }
 
