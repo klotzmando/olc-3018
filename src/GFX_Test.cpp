@@ -6,17 +6,17 @@ void GFX_Test::RunTest()
     switch (testNumber++)
     {
     case 0:
-        oled.Clear_Screen();
+        oled.ClearScreen();
 
-        oled.Set_Color(BLUE);
+        oled.SetFGColor(BLUE);
         oled.print_String(20, 50, (const uint8_t *)"Hello WaveShare !", FONT_5X8);
         break;
 
     case 1:
-        oled.Clear_Screen();
+        oled.ClearScreen();
 
-        oled.Set_Color(WHITE);
-        oled.Draw_Pixel(50, 50);
+        oled.SetFGColor(WHITE);
+        oled.DrawPixel(50, 50);
         break;
     case 3:
         lcdTestPattern();
@@ -34,7 +34,7 @@ void GFX_Test::RunTest()
         testfillrects(BLUE, YELLOW);
         break;
     case 8:
-        oled.Clear_Screen();
+        oled.ClearScreen();
         testfillcircles(63, BLUE);
         break;
     case 9:
@@ -47,7 +47,7 @@ void GFX_Test::RunTest()
         testtriangles();
         break;
     case 12:
-        oled.Display_Interface();
+        oled.DisplayInterface();
         delay(2000); // temporary to allow for better inspection
         break;
     case 13:
@@ -59,8 +59,8 @@ void GFX_Test::RunTest()
 void GFX_Test::testlines(void)
 {
 
-    oled.Set_Color(RED);
-    oled.Clear_Screen();
+    oled.SetFGColor(RED);
+    oled.ClearScreen();
     for (uint16_t x = 0; x <= SSD1351_WIDTH - 1; x += 6)
     {
         oled.Draw_Line(0, 0, x, SSD1351_HEIGHT - 1);
@@ -72,8 +72,8 @@ void GFX_Test::testlines(void)
         delay(10);
     }
 
-    oled.Set_Color(YELLOW);
-    oled.Clear_Screen();
+    oled.SetFGColor(YELLOW);
+    oled.ClearScreen();
     for (uint16_t x = 0; x < SSD1351_WIDTH - 1; x += 6)
     {
         oled.Draw_Line(SSD1351_WIDTH - 1, 0, x, SSD1351_HEIGHT - 1);
@@ -85,8 +85,8 @@ void GFX_Test::testlines(void)
         delay(10);
     }
 
-    oled.Set_Color(BLUE);
-    oled.Clear_Screen();
+    oled.SetFGColor(BLUE);
+    oled.ClearScreen();
     for (uint16_t x = 0; x < SSD1351_WIDTH - 1; x += 6)
     {
         oled.Draw_Line(0, SSD1351_HEIGHT - 1, x, 0);
@@ -98,8 +98,8 @@ void GFX_Test::testlines(void)
         delay(10);
     }
 
-    oled.Set_Color(GREEN);
-    oled.Clear_Screen();
+    oled.SetFGColor(GREEN);
+    oled.ClearScreen();
     for (uint16_t x = 0; x < SSD1351_WIDTH - 1; x += 6)
     {
         oled.Draw_Line(SSD1351_WIDTH - 1, SSD1351_HEIGHT - 1, x, 0);
@@ -115,7 +115,7 @@ void GFX_Test::testlines(void)
 void GFX_Test::lcdTestPattern(void)
 {
     uint32_t i, j;
-    oled.Set_Coordinate(0, 0);
+    oled.SetCoordinate(0, 0);
 
     for (i = 0; i < 128; i++)
     {
@@ -123,51 +123,43 @@ void GFX_Test::lcdTestPattern(void)
         {
             if (i < 16)
             {
-                oled.Set_Color(RED);
-                oled.Write_Data(color_byte[0]);
-                oled.Write_Data(color_byte[1]);
+                oled.SetFGColor(RED);
+                oled.DrawPixel();
             }
             else if (i < 32)
             {
-                oled.Set_Color(YELLOW);
-                oled.Write_Data(color_byte[0]);
-                oled.Write_Data(color_byte[1]);
+                oled.SetFGColor(YELLOW);
+                oled.DrawPixel();
             }
             else if (i < 48)
             {
-                oled.Set_Color(GREEN);
-                oled.Write_Data(color_byte[0]);
-                oled.Write_Data(color_byte[1]);
+                oled.SetFGColor(GREEN);
+                oled.DrawPixel();
             }
             else if (i < 64)
             {
-                oled.Set_Color(CYAN);
-                oled.Write_Data(color_byte[0]);
-                oled.Write_Data(color_byte[1]);
+                oled.SetFGColor(CYAN);
+                oled.DrawPixel();
             }
             else if (i < 80)
             {
-                oled.Set_Color(BLUE);
-                oled.Write_Data(color_byte[0]);
-                oled.Write_Data(color_byte[1]);
+                oled.SetFGColor(BLUE);
+                oled.DrawPixel();
             }
             else if (i < 96)
             {
-                oled.Set_Color(MAGENTA);
-                oled.Write_Data(color_byte[0]);
-                oled.Write_Data(color_byte[1]);
+                oled.SetFGColor(MAGENTA);
+                oled.DrawPixel();
             }
             else if (i < 112)
             {
-                oled.Set_Color(BLACK);
-                oled.Write_Data(color_byte[0]);
-                oled.Write_Data(color_byte[1]);
+                oled.SetFGColor(BLACK);
+                oled.DrawPixel();
             }
             else
             {
-                oled.Set_Color(WHITE);
-                oled.Write_Data(color_byte[0]);
-                oled.Write_Data(color_byte[1]);
+                oled.SetFGColor(WHITE);
+                oled.DrawPixel();
             }
         }
     }
@@ -176,24 +168,24 @@ void GFX_Test::lcdTestPattern(void)
 void GFX_Test::testfastlines(void)
 {
 
-    oled.Set_Color(WHITE);
-    oled.Clear_Screen();
+    oled.SetFGColor(WHITE);
+    oled.ClearScreen();
 
     for (uint16_t y = 0; y < SSD1351_WIDTH - 1; y += 5)
     {
-        oled.Draw_FastHLine(0, y, SSD1351_WIDTH - 1);
+        oled.DrawFastHLine(0, y, SSD1351_WIDTH - 1);
         delay(10);
     }
     for (uint16_t x = 0; x < SSD1351_HEIGHT - 1; x += 5)
     {
-        oled.Draw_FastVLine(x, 0, SSD1351_HEIGHT - 1);
+        oled.DrawFastVLine(x, 0, SSD1351_HEIGHT - 1);
         delay(10);
     }
 }
 
 void GFX_Test::testdrawrects(void)
 {
-    oled.Clear_Screen();
+    oled.ClearScreen();
     for (uint16_t x = 0; x < SSD1351_HEIGHT - 1; x += 6)
     {
         oled.Draw_Rect((SSD1351_WIDTH - 1) / 2 - x / 2, (SSD1351_HEIGHT - 1) / 2 - x / 2, x, x);
@@ -205,12 +197,12 @@ void GFX_Test::testfillrects(uint16_t color1, uint16_t color2)
 {
 
     uint16_t x = SSD1351_HEIGHT - 1;
-    oled.Clear_Screen();
-    oled.Set_Color(color1);
-    oled.Set_FillColor(color2);
+    oled.ClearScreen();
+    oled.SetFillColor(color2);
     for (; x > 6; x -= 6)
     {
         oled.Fill_Rect((SSD1351_WIDTH - 1) / 2 - x / 2, (SSD1351_HEIGHT - 1) / 2 - x / 2, x, x);
+        oled.SetFGColor(color1);
         oled.Draw_Rect((SSD1351_WIDTH - 1) / 2 - x / 2, (SSD1351_HEIGHT - 1) / 2 - x / 2, x, x);
     }
 }
@@ -218,7 +210,7 @@ void GFX_Test::testfillrects(uint16_t color1, uint16_t color2)
 void GFX_Test::testfillcircles(uint8_t radius, uint16_t color)
 {
 
-    oled.Set_Color(color);
+    oled.SetFGColor(color);
 
     oled.Fill_Circle(64, 64, radius);
 }
@@ -227,7 +219,7 @@ void GFX_Test::testdrawcircles(uint16_t color)
 {
 
     uint8_t r = 0;
-    oled.Set_Color(color);
+    oled.SetFGColor(color);
 
     for (; r < SSD1351_WIDTH / 2; r += 4)
     {
@@ -243,7 +235,7 @@ void GFX_Test::testroundrects(void)
     int x = 0, y = 0;
     int w = SSD1351_WIDTH - 1, h = SSD1351_HEIGHT - 1;
 
-    oled.Clear_Screen();
+    oled.ClearScreen();
 
     for (int i = 0; i <= 20; i++)
     {
@@ -254,13 +246,13 @@ void GFX_Test::testroundrects(void)
         w -= 4;
         h -= 6;
         color += 1100;
-        oled.Set_Color(color);
+        oled.SetFGColor(color);
     }
 }
 
 void GFX_Test::testtriangles(void)
 {
-    oled.Clear_Screen();
+    oled.ClearScreen();
     int color = 0xF800;
     int t;
     int w = SSD1351_WIDTH / 2;
@@ -274,6 +266,6 @@ void GFX_Test::testtriangles(void)
         y += 4;
         z -= 4;
         color += 100;
-        oled.Set_Color(color);
+        oled.SetFGColor(color);
     }
 }

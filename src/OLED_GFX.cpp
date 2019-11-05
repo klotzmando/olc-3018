@@ -39,8 +39,8 @@ void OLED_GFX::Display_String_8x16(uint8_t x, uint8_t y, const uint8_t *text) {
       j=text[i]-0x20;
       for(n=0;n<2;n++)  {
         for(k=0;k<8;k++)  {
-          Set_Address(x+k, n*8+y);
-          Write_text(ascii_table_8x16[j][k+8*n]);
+          SetAddress(x+k, n*8+y);
+          Writetext(ascii_table_8x16[j][k+8*n]);
         }
       }
       i++;
@@ -53,17 +53,19 @@ void OLED_GFX::Display_String_8x16(uint8_t x, uint8_t y, const uint8_t *text) {
 
 void OLED_GFX::Display_String_5x8(uint8_t x, uint8_t y, const uint8_t *text)  {
   
-  uint8_t i=0,j,k;
+  uint8_t i=0;
+  uint8_t j;    // Offset to the matrix for this character.
+  uint8_t k;
   
   while(text[i]>0x00) {  
     if((text[i]>=0x20)&&(text[i]<=0x7e))  {
       j=text[i]-0x20;
       for(k=0; k<5;k++)  {
-        Set_Address(x+k, y);
-        Write_text(ascii_table_5x8[j][k]);
+        SetAddress(x+k, y);
+        Writetext(ascii_table_5x8[j][k]);
       }
-      Set_Address(x+5, y);   
-      Write_text(0x00);
+      SetAddress(x+5, y);   
+      Writetext(0x00);
       i++;
       x+=6;
       if(x>=128)
@@ -78,12 +80,12 @@ void OLED_GFX::Draw_Line(int16_t x0, int16_t y0, int16_t x1, int16_t y1) {
   // Update in subclasses if desired!
   if(x0 == x1)  {
     if(y0 > y1) swap(y0, y1);
-    Draw_FastVLine(x0, y0, y1 - y0 + 1);
+    DrawFastVLine(x0, y0, y1 - y0 + 1);
   } 
   else if(y0 == y1) {
     if(x0 > x1)
       swap(x0, x1);
-    Draw_FastHLine(x0, y0, x1 - x0 + 1);
+    DrawFastHLine(x0, y0, x1 - x0 + 1);
   }
   else
     Write_Line(x0, y0, x1, y1);
@@ -118,9 +120,9 @@ void OLED_GFX::Write_Line(int16_t x0, int16_t y0, int16_t x1, int16_t y1)  {
 
   for(; x0<=x1; x0++) {
     if(steep)
-      Draw_Pixel(y0, x0);
+      DrawPixel(y0, x0);
     else
-      Draw_Pixel(x0, y0);
+      DrawPixel(x0, y0);
     err -= dy;
       
     if(err < 0) {
@@ -133,10 +135,10 @@ void OLED_GFX::Write_Line(int16_t x0, int16_t y0, int16_t x1, int16_t y1)  {
 // Draw a rectangle
 void OLED_GFX::Draw_Rect(int16_t x, int16_t y, int16_t w, int16_t h) {
     
-  Draw_FastHLine(x, y, w);
-  Draw_FastHLine(x, y+h-1, w);
-  Draw_FastVLine(x, y, h);
-  Draw_FastVLine(x+w-1, y, h);
+  DrawFastHLine(x, y, w);
+  DrawFastHLine(x, y+h-1, w);
+  DrawFastVLine(x, y, h);
+  DrawFastVLine(x+w-1, y, h);
 }
 
 
@@ -156,24 +158,23 @@ void OLED_GFX::Fill_Rect(uint16_t x, uint16_t y, uint16_t w, uint16_t h) {
   }
 
   // set location
-  Write_Command(SSD1351_CMD_SETCOLUMN);
-  Write_Data(x);
-  Write_Data(x+w-1);
-  Write_Command(SSD1351_CMD_SETROW);
-  Write_Data(y);
-  Write_Data(y+h-1);
+  WriteCommand(SSD1351_CMD_SETCOLUMN);
+  WriteData(x);
+  WriteData(x+w-1);
+  WriteCommand(SSD1351_CMD_SETROW);
+  WriteData(y);
+  WriteData(y+h-1);
   // fill!
-  Write_Command(SSD1351_CMD_WRITERAM);  
+  WriteCommand(SSD1351_CMD_WRITERAM);  
   
   for (uint16_t i=0; i < w*h; i++) {
-    Write_Data(color_fill_byte[0]);
-    Write_Data(color_fill_byte[1]);
+    DrawPixel();
   }
 }
 
 void OLED_GFX::Fill_Circle(int16_t x0, int16_t y0, int16_t r) {
   
-  Draw_FastVLine(x0, y0-r, 2*r+1);
+  DrawFastVLine(x0, y0-r, 2*r+1);
   FillCircle_Helper(x0, y0, r, 3, 0);
 }
 
@@ -197,12 +198,12 @@ void OLED_GFX::FillCircle_Helper(int16_t x0, int16_t y0, int16_t r, uint8_t corn
     f += ddF_x;
 
     if(corner & 0x1)  {
-      Draw_FastVLine(x0+x, y0-y, 2*y+1+delta);
-      Draw_FastVLine(x0+y, y0-x, 2*x+1+delta);
+      DrawFastVLine(x0+x, y0-y, 2*y+1+delta);
+      DrawFastVLine(x0+y, y0-x, 2*x+1+delta);
     }
     if(corner & 0x2)  {
-      Draw_FastVLine(x0-x, y0-y, 2*y+1+delta);
-      Draw_FastVLine(x0-y, y0-x, 2*x+1+delta);
+      DrawFastVLine(x0-x, y0-y, 2*y+1+delta);
+      DrawFastVLine(x0-y, y0-x, 2*x+1+delta);
     }
   }
 }
@@ -215,10 +216,10 @@ void OLED_GFX::Draw_Circle(int16_t x0, int16_t y0, int16_t r) {
   int16_t x = 0;
   int16_t y = r;
 
-  Draw_Pixel(x0  , y0+r);
-  Draw_Pixel(x0  , y0-r);
-  Draw_Pixel(x0+r, y0  );
-  Draw_Pixel(x0-r, y0  );
+  DrawPixel(x0  , y0+r);
+  DrawPixel(x0  , y0-r);
+  DrawPixel(x0+r, y0  );
+  DrawPixel(x0-r, y0  );
 
   while (x<y) {
     if (f >= 0) {
@@ -230,14 +231,14 @@ void OLED_GFX::Draw_Circle(int16_t x0, int16_t y0, int16_t r) {
     ddF_x += 2;
     f += ddF_x;
 
-    Draw_Pixel(x0 + x, y0 + y);
-    Draw_Pixel(x0 - x, y0 + y);
-    Draw_Pixel(x0 + x, y0 - y);
-    Draw_Pixel(x0 - x, y0 - y);
-    Draw_Pixel(x0 + y, y0 + x);
-    Draw_Pixel(x0 - y, y0 + x);
-    Draw_Pixel(x0 + y, y0 - x);
-    Draw_Pixel(x0 - y, y0 - x);
+    DrawPixel(x0 + x, y0 + y);
+    DrawPixel(x0 - x, y0 + y);
+    DrawPixel(x0 + x, y0 - y);
+    DrawPixel(x0 - x, y0 - y);
+    DrawPixel(x0 + y, y0 + x);
+    DrawPixel(x0 - y, y0 + x);
+    DrawPixel(x0 + y, y0 - x);
+    DrawPixel(x0 - y, y0 - x);
     }
 }
 
@@ -245,10 +246,10 @@ void OLED_GFX::Draw_Circle(int16_t x0, int16_t y0, int16_t r) {
 void OLED_GFX::Draw_RoundRect(int16_t x, int16_t y, int16_t w, int16_t h, int16_t r)  {
     // smarter version
 
-    Draw_FastHLine(x+r  , y    , w-2*r); // Top
-    Draw_FastHLine(x+r  , y+h-1, w-2*r); // Bottom
-    Draw_FastVLine(x    , y+r  , h-2*r); // Left
-    Draw_FastVLine(x+w-1, y+r  , h-2*r); // Right
+    DrawFastHLine(x+r  , y    , w-2*r); // Top
+    DrawFastHLine(x+r  , y+h-1, w-2*r); // Bottom
+    DrawFastVLine(x    , y+r  , h-2*r); // Left
+    DrawFastVLine(x+w-1, y+r  , h-2*r); // Right
     // draw four corners
     DrawCircle_Helper(x+r    , y+r    , r, 1);
     DrawCircle_Helper(x+w-r-1, y+r    , r, 2);
@@ -273,20 +274,20 @@ void OLED_GFX::DrawCircle_Helper( int16_t x0, int16_t y0, int16_t r, uint8_t cor
     ddF_x += 2;
     f += ddF_x;
     if (corner & 0x4) {
-      Draw_Pixel(x0 + x, y0 + y);
-      Draw_Pixel(x0 + y, y0 + x);
+      DrawPixel(x0 + x, y0 + y);
+      DrawPixel(x0 + y, y0 + x);
     }
     if (corner & 0x2) {
-      Draw_Pixel(x0 + x, y0 - y);
-      Draw_Pixel(x0 + y, y0 - x);
+      DrawPixel(x0 + x, y0 - y);
+      DrawPixel(x0 + y, y0 - x);
     }
     if (corner & 0x8) {
-      Draw_Pixel(x0 - y, y0 + x);
-      Draw_Pixel(x0 - x, y0 + y);
+      DrawPixel(x0 - y, y0 + x);
+      DrawPixel(x0 - x, y0 + y);
     }
     if (corner & 0x1) {
-      Draw_Pixel(x0 - y, y0 - x);
-      Draw_Pixel(x0 - x, y0 - y);
+      DrawPixel(x0 - y, y0 - x);
+      DrawPixel(x0 - x, y0 - y);
     }
   }
 }
